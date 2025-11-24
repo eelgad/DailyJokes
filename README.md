@@ -1,26 +1,38 @@
 # DailyJokes
 
+Submitted by: **Elisheva El-Gad**  
+**Z23723068**
+
 ## Table of Contents
 
-1. [Overview](#Overview)
-2. [Product Spec](#Product-Spec)
-3. [Wireframes](#Wireframes)
-4. [Schema](#Schema)
+1. [Overview](#overview)
+2. [App Features](#app-features)
+3. [Product Spec](#product-spec)
+4. [Screen Archetypes](#screen-archetypes)
+5. [Navigation](#navigation)
+6. [Wireframes](#wireframes)
+7. [Backend Integration](#backend-integration)
+8. [External-api](#external-api)
+9. [Schema](#schema)
+10. [Milestone 6 Requirements Checklist](#milestone-6-requirements-checklist)
 
 ---
 
 ## Overview
 
-### Description
-DailyJokes provides users with a new joke every day, sourced from an external API. Users must log in or sign up to use the app. Once logged in, they can view the daily joke, mark jokes as favorites, and optionally share jokes with friends.  
+DailyJokes is a mobile app that provides users with a new joke every day sourced from an external API. Users must log in or sign up using Parse. Logged-in users can view the daily joke, save jokes to their favorites, and revisit them anytime. Favorites are stored and persisted using Parse (Back4App).
 
-### App Evaluation
-- **Category:** Entertainment / Social Networking  
-- **Mobile:** Mobile is essential for daily notifications, login, and quick access to jokes.  
-- **Story:** Users get a fun daily joke while managing their own favorites. Login ensures personalized experience and persistence across devices.  
-- **Market:** Anyone who enjoys humor and short-form content. Monetization could be through ads or premium features (e.g., more joke categories).  
-- **Habit:** Users check the app daily for the joke of the day and interact with favorites.  
-- **Scope:** Simple MVP: login/signup, view daily jokes, mark favorites. Sharing is optional.  
+---
+
+## App Features
+
+- Login and signup using Parse  
+- Fetch and display the daily joke via an external API  
+- Favorite jokes and save them to Parse  
+- View previously saved favorite jokes  
+- Splash screen with student name and Z-number  
+- Joke details screen  
+- Optional: Share jokes
 
 ---
 
@@ -29,56 +41,94 @@ DailyJokes provides users with a new joke every day, sourced from an external AP
 ### 1. User Stories (Required and Optional)
 
 **Required Must-have Stories**
-* User can sign up for a new account.  
-* User can log in to an existing account.  
-* User can view the daily joke from the API.  
-* User can mark jokes as favorites.  
-* User can browse previously favorited jokes.  
+- User can sign up for a new account  
+- User can log in to an existing account  
+- User can view the daily joke from the API  
+- User can mark jokes as favorites  
+- User can browse previously favorited jokes  
+- User sees a Splash Intro screen with Student Name and Z#  
 
 **Optional Nice-to-have Stories**
-* User can share jokes via social apps.  
-* User can receive notifications for the daily joke.  
+- User can share jokes via social apps  
+- User can receive notifications for the daily joke  
 
 ---
 
-### 2. Screen Archetypes
+## Screen Archetypes
 
-- [ ] **Login/Signup Screen**
-  * Required: User can log in or create a new account.  
-- [ ] **Home Screen**
-  * Required: User can view the joke of the day.  
-- [ ] **Favorites Screen**
-  * Required: User can view and manage favorite jokes.  
-- [ ] **Share Option**
-  * Optional: User can share a joke.  
+- **Splash Screen**
+  - Displays app title, student name, and Z-number  
+
+- **Login/Signup Screen**
+  - User can sign up or log in via Parse  
+
+- **Home Screen**
+  - Displays the joke of the day from the API  
+  - Users can favorite or share the joke  
+
+- **Favorites Screen**
+  - Displays a list of jokes favorited by the user  
+
+- **Joke Details Screen**
+  - Shows the full joke  
+  - Options to share or favorite/unfavorite  
 
 ---
 
-### 3. Navigation
+## Navigation
 
-**Tab Navigation**
-- [ ] Home  
-- [ ] Favorites  
+### Tab Navigation
+- Home  
+- Favorites  
 
-**Flow Navigation**
-- [ ] Login/Signup Screen  
-  * Leads to Home Screen after successful login  
-- [ ] Home Screen  
-  * Optionally shares joke via share sheet  
-  * Leads to Favorites Screen  
-- [ ] Favorites Screen  
+### Flow Navigation
+- Splash Screen  
+  - Leads to Login/Signup  
+- Login/Signup Screen  
+  - Leads to Home Screen after successful login  
+- Home Screen  
+  - Optionally shares joke  
+  - Leads to Favorites Screen  
+  - Leads to Joke Details Screen  
+- Favorites Screen  
+  - Leads to Joke Details Screen  
 
 ---
 
 ## Wireframes
 
-![Video Walkthrough](https://i.imgur.com/cyviZ6S.gif) 
+![Wireframes](https://i.imgur.com/cyviZ6S.gif)
 
-### [BONUS] Digital Wireframes & Mockups
-[Optional: Include links or images to Figma/Sketch mockups]  
+---
 
-### [BONUS] Interactive Prototype
-[Optional: Include prototype links if created]  
+## Backend Integration
+
+DailyJokes uses Parse (Back4App) for:
+
+- User authentication  
+- Persisting favorite jokes  
+- Retrieving previously saved data  
+
+Each favorited joke includes:
+
+| Field   | Type    | Description                 |
+|---------|---------|-----------------------------|
+| user    | Pointer | The logged-in user          |
+| jokeId  | String  | API joke ID                 |
+| text    | String  | The joke text               |
+
+---
+
+## External API
+
+DailyJokes retrieves its daily joke from a public joke API.
+
+**Endpoint:**  
+`GET /dailyjoke` – returns a new joke of the day
+
+Returns:  
+- id  
+- text  
 
 ---
 
@@ -87,23 +137,50 @@ DailyJokes provides users with a new joke every day, sourced from an external AP
 ### Models
 
 **User**
-| Property | Type   | Description                                  |
-|----------|--------|----------------------------------------------|
-| id       | String | Unique identifier for the user               |
-| username | String | User login name                               |
-| email    | String | User email for account login                 |
-| password | String | User password (stored securely via Back4App)|
+| Property  | Type   | Description                                   |
+|-----------|--------|-----------------------------------------------|
+| objectId  | String | Unique identifier for the user                |
+| username  | String | User login name                               |
+| email     | String | User email                                    |
+| password  | String | Encrypted password handled by Parse           |
 
-**Joke**
-| Property | Type   | Description                                  |
-|----------|--------|----------------------------------------------|
-| id       | String | Unique identifier for the joke (from API)   |
-| text     | String | The joke text                                |
-| favorites| Bool   | Whether the user marked this joke as favorite |
+**Joke (Favorite Joke Object in Parse)**
+| Property | Type    | Description                                  |
+|----------|---------|----------------------------------------------|
+| objectId | String  | Unique identifier for the favorite entry     |
+| user     | Pointer | Associated Parse user                        |
+| jokeId   | String  | Unique identifier for the joke               |
+| text     | String  | The joke text                                |
 
 ### Networking
-- `[POST] /users/signup` - Create a new user account via Back4App  
-- `[POST] /users/login` - Log in existing user via Back4App  
-- `[GET] /dailyjoke` - Retrieve the daily joke from the API  
-- `[GET] /favorites` - Retrieve user's favorite jokes (Back4App or local storage)  
-- `[POST] /favorites` - Mark a joke as favorite  
+- `POST /users/signup` – create a new user account  
+- `POST /users/login` – log in existing user  
+- `GET /dailyjoke` – retrieve the daily joke from the external API  
+- `GET /favorites` – get user's saved jokes  
+- `POST /favorites` – add a joke to favorites  
+
+---
+
+## Milestone 6 Requirements Checklist
+
+### Required Functions
+- Login/signup with Parse  
+- Use external API for daily joke  
+- Use Parse backend for persistence  
+
+### 4 Required Non-Login Screens
+- Splash Screen  
+- Home Screen  
+- Favorites Screen  
+- Joke Details Screen  
+
+### Additional Requirements
+- README included  
+- Demo video presentation  
+
+### Extra Credit (Optional)
+- Map and Location  
+- Camera  
+- TestFlight Deployment  
+
+---
